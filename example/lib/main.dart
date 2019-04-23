@@ -12,7 +12,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  Map<PermissionGroup, PermissionResult> _platformVersion;
+  Map<Permission, PermissionState> _platformVersion;
 
   @override
   void initState() {
@@ -22,10 +22,10 @@ class _MyAppState extends State<MyApp> {
 
   // Platform messages are asynchronous, so we initialize in an async method.
   Future<void> initPlatformState() async {
-    Map<PermissionGroup, PermissionResult> platformVersion;
+    Map<Permission, PermissionState> platformVersion;
     // Platform messages may fail, so we use a try/catch PlatformException.
     try {
-      platformVersion = await PermissionsPlugin.requestPermissions([PermissionGroup.LOCATION, PermissionGroup.CAMERA]);
+      platformVersion = await PermissionsPlugin.requestPermissions([Permission.ACCESS_FINE_LOCATION, Permission.ACCESS_COARSE_LOCATION]);
     } on PlatformException {
       debugPrint("Error");
     }
