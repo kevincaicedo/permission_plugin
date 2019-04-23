@@ -25,7 +25,11 @@ class _MyAppState extends State<MyApp> {
     Map<Permission, PermissionState> platformVersion;
     // Platform messages may fail, so we use a try/catch PlatformException.
     try {
-      platformVersion = await PermissionsPlugin.requestPermissions([Permission.ACCESS_FINE_LOCATION, Permission.ACCESS_COARSE_LOCATION]);
+      platformVersion = await PermissionsPlugin.checkPermissions([
+            Permission.ACCESS_FINE_LOCATION,
+            Permission.ACCESS_COARSE_LOCATION,
+            Permission.CAMERA
+      ]);
     } on PlatformException {
       debugPrint("Error");
     }

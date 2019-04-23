@@ -12,6 +12,7 @@ import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
 import com.rioapp.permissions_plugin.enums.PermissionsName
 import com.rioapp.permissions_plugin.enums.toCode
+import androidx.core.content.ContextCompat
 
 class PermissionsPlugin(private val activity: Activity) : MethodCallHandler, PluginRegistry.RequestPermissionsResultListener {
 
@@ -41,7 +42,7 @@ class PermissionsPlugin(private val activity: Activity) : MethodCallHandler, Plu
     }
 
 
-    fun requestPermissions(arguments: Any) {
+    private fun requestPermissions(arguments: Any) {
         val permissionsGroup = (arguments as ArrayList<*>)
                 .map { value -> PermissionsName.valueOf(value as String).toManifestNames() }.toTypedArray()
         if (permissionsGroup.isNotEmpty())
@@ -50,9 +51,22 @@ class PermissionsPlugin(private val activity: Activity) : MethodCallHandler, Plu
             mResult?.success(permissionsGroup)
     }
 
-    fun checkPermissions(arguments: Any) {
+    private fun checkPermissions(arguments: Any) {
         val permissionsGroup = (arguments as ArrayList<*>)
                 .map { value -> PermissionsName.valueOf(value as String).toManifestNames() }.toTypedArray()
+
+        if (permissionsGroup.isEmpty()) {
+            mResult?.success(permissionsGroup)
+            return
+        }
+
+        val permissionsResult = HashMap<Int, Int>()
+
+        for (name in permissionsGroup) {
+            permissionsResult[toCode(name)] =  Math.abs( ContextCompat.checkSelfPermission(activity, name) )
+        }
+
+        mResult?.success(permissionsResult)
     }
 
     fun checkPermissionManifest() {
@@ -60,7 +74,7 @@ class PermissionsPlugin(private val activity: Activity) : MethodCallHandler, Plu
                 .getPackageInfo(activity.packageName, PackageManager.GET_PERMISSIONS).requestedPermissions
     }
 
-    fun permissionResponse(permissions: Array<out String>?, results: IntArray?) {
+    private fun permissionResponse(permissions: Array<out String>?, results: IntArray?) {
 
         val permissionsResult = HashMap<Int, Int>()
         if (permissions == null || permissions.isEmpty()) {
