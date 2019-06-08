@@ -77,9 +77,11 @@ packages:
   permissions_plugin:
     dependency: "direct dev"
     description:
-      path: ".."
-      relative: true
-    source: path
+      path: "."
+      ref: HEAD
+      resolved-ref: "99414b6e00758696d101207e16fc59924c36ec42"
+      url: "git://github.com/kevincaicedo/permission_plugin.git"
+    source: git
     version: "0.0.1"
   quiver:
     dependency: transitive
