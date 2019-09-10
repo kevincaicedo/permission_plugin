@@ -16,9 +16,7 @@ enum Permission {
   ACCESS_COARSE_LOCATION,
   RECORD_AUDIO,
   READ_PHONE_STATE,
-  READ_PHONE_NUMBERS,
   CALL_PHONE,
-  ANSWER_PHONE_CALLS,
   ADD_VOICEMAIL,
   USE_SIP,
   BODY_SENSORS,
@@ -33,7 +31,8 @@ enum Permission {
 
 enum PermissionState {
   GRANTED,
-  DENIED
+  DENIED,
+  UNKNOWN
 }
 
 class PermissionsPlugin {
@@ -45,36 +44,31 @@ class PermissionsPlugin {
     "request-permissions", "check-permissions"
   ];
 
-  static Future<String> get platformVersion async {
-    final String version = await _channel.invokeMethod('getPlatformVersion');
-    return version;
-  }
-
   static Future<Map<Permission, PermissionState>> requestPermissions(List<Permission> permissions) async {
-    if(permissions.isEmpty) return null;
+    if(permissions.isEmpty) return {};
 
     final List<String> permissionsValues = permissions
         .map((Permission pg) => pg.toString().split(".")[1])
         .cast<String>().toList();
 
     final Map<dynamic, dynamic> results = await _channel.invokeMethod(CommandName[0], permissionsValues);
-    final Map<Permission, PermissionState> permissionResult = mappingResult(Map<int, int>.from(results));
+    final Map<Permission, PermissionState> permissionResult = _mappingResult(Map<int, int>.from(results));
     return permissionResult;
   }
 
   static Future<Map<Permission, PermissionState>> checkPermissions(List<Permission> permissions) async {
-    if(permissions.isEmpty) return null;
+    if(permissions.isEmpty) return {};
 
     final List<String> permissionsValues = permissions
         .map((Permission pg) => pg.toString().split(".")[1])
         .cast<String>().toList();
 
     final Map<dynamic, dynamic> results = await _channel.invokeMethod(CommandName[1], permissionsValues);
-    final Map<Permission, PermissionState> permissionResult = mappingResult(Map<int, int>.from(results));
+    final Map<Permission, PermissionState> permissionResult = _mappingResult(Map<int, int>.from(results));
     return permissionResult;
   }
 
-  static Map<Permission, PermissionState> mappingResult(Map<int, int> results){
+  static Map<Permission, PermissionState> _mappingResult(Map<int, int> results){
     return results.map((int pg, int pr) => MapEntry(Permission.values[pg], PermissionState.values[pr]));
   }
 

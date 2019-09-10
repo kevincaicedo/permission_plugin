@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 
-import 'dart:io';
 import 'package:permissions_plugin/permissions_plugin.dart';
 
 
@@ -86,7 +85,6 @@ class MyApp extends StatelessWidget {
   }
 
   void permissionsDenied(BuildContext context){
-    Timer(Duration(seconds: 4), () => exit(0));
     showDialog(context: context, builder: (BuildContext _context) {
       return SimpleDialog(
         title: const Text("Permisos denegados"),

@@ -1,6 +1,5 @@
 package com.rioapp.permissions_plugin
 
-import android.os.Build
 import com.rioapp.permissions_plugin.enums.CommandName
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -24,7 +23,6 @@ class PermissionsPlugin(private val delegate: PermissionsPluginDelegate) : Metho
 
     override fun onMethodCall(call: MethodCall, result: Result) {
         when {
-            call.method == "getPlatformVersion" -> result.success("Android ${Build.VERSION.RELEASE}")
             call.method == CommandName.REQUEST_PERMISSIONS.toString() -> delegate.requestPermission(call.arguments, result)
             call.method == CommandName.CHECK_PERMISSIONS.toString() -> delegate.checkPermissions(call.arguments, result)
             else -> result.notImplemented()

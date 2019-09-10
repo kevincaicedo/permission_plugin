@@ -18,8 +18,11 @@
 # Visual Studio Code related
 .vscode/
 
+
 # Flutter/Dart/Pub related
 **/doc/api/
+pubspec.lock
+perimissions_plugin.iml
 .dart_tool/
 .flutter-plugins
 .packages

@@ -1,6 +1,5 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:permissions_plugin/permissions_plugin.dart';
 
 void main() {
   const MethodChannel channel = MethodChannel('permissions_plugin');
@@ -16,6 +15,5 @@ void main() {
   });
 
   test('getPlatformVersion', () async {
-    expect(await PermissionsPlugin.platformVersion, '42');
   });
 }
