@@ -127,10 +127,11 @@ enum PermissionState {
 ---
 
 ### Platform Support
-| OS | Min Version |
-| -- | ----------- |
-| Android | minSdkVersion 16 |
-| IOS | **soon** |
+
+OS | Min Version
+-- | -----------
+Android | minSdkVersion 16
+IOS | **soon**
 
 
 License
