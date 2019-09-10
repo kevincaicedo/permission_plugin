@@ -41,7 +41,10 @@ class PermissionsPlugin {
       const MethodChannel('permissions_plugin');
 
   static const List<String> CommandName = [
-    "request-permissions", "check-permissions"
+    "request-permissions", 
+    "check-permissions", 
+    "check-battery-optimization",
+    "request-battery-optimization", 
   ];
 
   static Future<Map<Permission, PermissionState>> requestPermissions(List<Permission> permissions) async {
@@ -66,6 +69,16 @@ class PermissionsPlugin {
     final Map<dynamic, dynamic> results = await _channel.invokeMethod(CommandName[1], permissionsValues);
     final Map<Permission, PermissionState> permissionResult = _mappingResult(Map<int, int>.from(results));
     return permissionResult;
+  }
+
+  static Future<PermissionState> get isIgnoreBatteryOptimization async {
+    final int result = await _channel.invokeMethod(CommandName[2]);
+    return PermissionState.values[result];
+  }
+
+  static Future<PermissionState> get requestIgnoreBatteryOptimization async {
+    final int result = await _channel.invokeMethod(CommandName[3]);
+    return PermissionState.values[result];
   }
 
   static Map<Permission, PermissionState> _mappingResult(Map<int, int> results){
