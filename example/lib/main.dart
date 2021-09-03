@@ -1,10 +1,45 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 
+import 'package:image_picker/image_picker.dart';
+// import 'package:imei_plugin/imei_plugin.dart';
 import 'package:flutter/services.dart';
 import 'package:permissions_plugin/permissions_plugin.dart';
 
-void main() => runApp(MyApp());
+
+void main() => runApp(MyInitApp());
+
+class MyInitApp extends StatelessWidget {
+  // This widget is the root of your application.
+
+  @override
+  Widget build(BuildContext context) {
+    //initPlatformState();
+    return MaterialApp(
+      title: 'Ecample permission',
+      //showPerformanceOverlay: true,
+      //showSemanticsDebugger: true,
+      theme: ThemeData(
+        // This is the theme of your application.
+        //
+        // Try running your application with "flutter run". You'll see the
+        // application has a blue toolbar. Then, without quitting the app, try
+        // changing the primarySwatch below to Colors.green and then invoke
+        // "hot reload" (press "r" in the console where you ran "flutter run",
+        // or simply save your changes to "hot reload" in a Flutter IDE).
+        // Notice that the counter didn't reset back to zero; the application
+        // is not restarted.
+        primarySwatch: Colors.green,
+      ),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => MyApp(),
+        '/login': (context) => MyApp()
+      },
+      //home: MyApp(),
+    );
+  }
+}
 
 class MyApp extends StatefulWidget {
   @override
@@ -25,10 +60,10 @@ class _MyAppState extends State<MyApp> {
     Map<Permission, PermissionState> platformVersion;
     // Platform messages may fail, so we use a try/catch PlatformException.
     try {
+      // String imei = await ImeiPlugin.getImei;
+      var image = await ImagePicker.pickImage(source: ImageSource.gallery);
       platformVersion = await PermissionsPlugin.requestPermissions([
             Permission.ACCESS_FINE_LOCATION,
-            Permission.ACCESS_COARSE_LOCATION,
-            Permission.CAMERA
       ]);
     } on PlatformException {
       debugPrint("Error");
@@ -46,15 +81,13 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
+    return  Scaffold(
         appBar: AppBar(
           title: const Text('Plugin example app'),
         ),
         body: Center(
           child: Text('Running on:'),
         ),
-      ),
     );
   }
 }
