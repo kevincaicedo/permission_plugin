@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 
-import 'package:image_picker/image_picker.dart';
-// import 'package:imei_plugin/imei_plugin.dart';
-import 'package:flutter/services.dart';
+import 'dart:io';
 import 'package:permissions_plugin/permissions_plugin.dart';
 
 
@@ -41,53 +39,71 @@ class MyInitApp extends StatelessWidget {
   }
 }
 
-class MyApp extends StatefulWidget {
-  @override
-  _MyAppState createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-  Map<Permission, PermissionState> _platformVersion;
-
-  @override
-  void initState() {
-    super.initState();
-    initPlatformState();
-  }
-
-  // Platform messages are asynchronous, so we initialize in an async method.
-  Future<void> initPlatformState() async {
-    Map<Permission, PermissionState> platformVersion;
-    // Platform messages may fail, so we use a try/catch PlatformException.
-    try {
-      // String imei = await ImeiPlugin.getImei;
-      var image = await ImagePicker.pickImage(source: ImageSource.gallery);
-      platformVersion = await PermissionsPlugin.requestPermissions([
-            Permission.ACCESS_FINE_LOCATION,
-      ]);
-    } on PlatformException {
-      debugPrint("Error");
-    }
-
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
-    if (!mounted) return;
-
-    setState(() {
-      _platformVersion = platformVersion;
-    });
-  }
-
+class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
-        appBar: AppBar(
-          title: const Text('Plugin example app'),
-        ),
-        body: Center(
-          child: Text('Running on:'),
-        ),
+    checkPermissions(context);
+
+    return Scaffold(
+      appBar: AppBar(),
     );
   }
+
+  Future<void> checkPermissions(BuildContext context) async {
+
+    Map<Permission, PermissionState> permission = await PermissionsPlugin
+        .checkPermissions([
+      Permission.ACCESS_FINE_LOCATION,
+      Permission.ACCESS_COARSE_LOCATION,
+      Permission.READ_PHONE_STATE
+    ]);
+
+    if( permission[Permission.ACCESS_FINE_LOCATION] != PermissionState.GRANTED ||
+        permission[Permission.ACCESS_COARSE_LOCATION] != PermissionState.GRANTED ||
+        permission[Permission.READ_PHONE_STATE] != PermissionState.GRANTED ) {
+
+      try {
+        permission = await PermissionsPlugin
+            .requestPermissions([
+          Permission.ACCESS_FINE_LOCATION,
+          Permission.ACCESS_COARSE_LOCATION,
+          Permission.READ_PHONE_STATE
+        ]);
+      } on Exception {
+        debugPrint("Error");
+      }
+
+      if( permission[Permission.ACCESS_FINE_LOCATION] == PermissionState.GRANTED &&
+          permission[Permission.ACCESS_COARSE_LOCATION] == PermissionState.GRANTED &&
+          permission[Permission.READ_PHONE_STATE] == PermissionState.GRANTED )
+        print("Login ok");
+      else
+        permissionsDenied(context);
+
+    } else {
+      print("Login ok");
+    }
+  }
+
+  void permissionsDenied(BuildContext context){
+    Timer(Duration(seconds: 4), () => exit(0));
+    showDialog(context: context, builder: (BuildContext _context) {
+      return SimpleDialog(
+        title: const Text("Permisos denegados"),
+        children: <Widget>[
+          Container(
+            padding: EdgeInsets.only(left: 30, right: 30, top: 15, bottom: 15),
+            child: const Text(
+              "Debes conceder todo los permiso para poder usar esta aplicacion",
+              style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.black54
+              ),
+            ),
+          )
+        ],
+      );
+    });
+  }
 }
+
