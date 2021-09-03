@@ -54,7 +54,7 @@ class PermissionsPlugin {
         .map((Permission pg) => pg.toString().split(".")[1])
         .cast<String>().toList();
 
-    final Map<dynamic, dynamic> results = await _channel.invokeMethod(CommandName[0], permissionsValues);
+    final Map<dynamic, dynamic> results = await (_channel.invokeMethod(CommandName[0], permissionsValues) as FutureOr<Map<dynamic, dynamic>>);
     final Map<Permission, PermissionState> permissionResult = _mappingResult(Map<int, int>.from(results));
     return permissionResult;
   }
@@ -66,18 +66,18 @@ class PermissionsPlugin {
         .map((Permission pg) => pg.toString().split(".")[1])
         .cast<String>().toList();
 
-    final Map<dynamic, dynamic> results = await _channel.invokeMethod(CommandName[1], permissionsValues);
+    final Map<dynamic, dynamic> results = await (_channel.invokeMethod(CommandName[1], permissionsValues) as FutureOr<Map<dynamic, dynamic>>);
     final Map<Permission, PermissionState> permissionResult = _mappingResult(Map<int, int>.from(results));
     return permissionResult;
   }
 
   static Future<PermissionState> get isIgnoreBatteryOptimization async {
-    final int result = await _channel.invokeMethod(CommandName[2]);
+    final int result = await (_channel.invokeMethod(CommandName[2]) as FutureOr<int>);
     return PermissionState.values[result];
   }
 
   static Future<PermissionState> get requestIgnoreBatteryOptimization async {
-    final int result = await _channel.invokeMethod(CommandName[3]);
+    final int result = await (_channel.invokeMethod(CommandName[3]) as FutureOr<int>);
     return PermissionState.values[result];
   }
 
