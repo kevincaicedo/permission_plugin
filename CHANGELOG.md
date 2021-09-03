@@ -1,8 +1,13 @@
-## 0.0.1
-
-* TODO: Describe initial release.
-
+## 1.1.4
+* Request ignore battery optimization
+* check status ignore battery optimization
+* Fix bugs
 
 ## 1.0.0
 
-* First release
+* Request permission on runtime
+* Check status permission on runtime
+
+## 0.0.1
+
+* TODO: Describe initial release.

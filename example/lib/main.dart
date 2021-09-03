@@ -50,6 +50,14 @@ class MyApp extends StatelessWidget {
 
   Future<void> checkPermissions(BuildContext context) async {
 
+    final PermissionState aks = await PermissionsPlugin.isIgnoreBatteryOptimization;
+
+    PermissionState resBattery;
+    if(aks != PermissionState.GRANTED)
+      resBattery = await PermissionsPlugin.requestIgnoreBatteryOptimization;
+
+    print(resBattery);
+    
     Map<Permission, PermissionState> permission = await PermissionsPlugin
         .checkPermissions([
       Permission.ACCESS_FINE_LOCATION,

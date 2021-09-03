@@ -1,9 +1,15 @@
 package com.rioapp.permissions_plugin
 
 import android.app.Activity
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Build
+import android.os.PowerManager
+import android.provider.Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
 import android.util.SparseIntArray
 import androidx.core.app.ActivityCompat
+import androidx.core.app.ActivityCompat.startActivityForResult
 import androidx.core.content.ContextCompat
 import com.rioapp.permissions_plugin.enums.PermissionState
 import com.rioapp.permissions_plugin.enums.PermissionsName
@@ -13,10 +19,21 @@ import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.PluginRegistry
 import kotlin.math.abs
 
-class PermissionsPluginDelegate(private val activity: Activity): PluginRegistry.RequestPermissionsResultListener {
+class PermissionsPluginDelegate(private val activity: Activity): PluginRegistry.RequestPermissionsResultListener, PluginRegistry.ActivityResultListener {
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?): Boolean {
+        if (requestCode == CODE_REQUEST_CHECK_BATTERY) {
+            mResult?.success( if (resultCode == Activity.RESULT_OK) 0 else 1)
+            return true
+        }
+
+        return false
+    }
+
     private var mResult: MethodChannel.Result? = null
     private val mPermissionList = SparseIntArray()
     private val CODE_REQUEST_PERMISSION = 2358
+    private val CODE_REQUEST_CHECK_BATTERY = 3930
 
     //    private val mPermissionsManifest: ArrayList<String> = arrayListOf()
     //
@@ -25,6 +42,30 @@ class PermissionsPluginDelegate(private val activity: Activity): PluginRegistry.
     //                .getPackageInfo(activity.packageName, PackageManager.GET_PERMISSIONS).requestedPermissions
     //    }
 
+    fun requestIgnoreBatteryOptimization(result: MethodChannel.Result) {
+        mResult = result
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val intent = Intent(ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
+            intent.data = Uri.parse("package:${activity.packageName}" )
+            startActivityForResult(activity, intent, CODE_REQUEST_CHECK_BATTERY, null)
+        } else {
+            result.success(PermissionState.GRANTED)
+        }
+    }
+
+    fun isIgnoreBatteryOptimization(result: MethodChannel.Result) {
+        val powerManager = activity.getSystemService(Context.POWER_SERVICE) as PowerManager
+        val name = activity.packageName
+
+        val isAppWhiteListBattery = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            powerManager.isIgnoringBatteryOptimizations(name)
+        else
+            true
+
+        val res: Int = if (isAppWhiteListBattery) 0 else 1
+        result.success(res)
+    }
 
     private fun validatePermission(permissionsGroup: Array<String>): Array<String> {
 
