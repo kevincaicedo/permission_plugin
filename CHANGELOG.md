@@ -1,3 +1,6 @@
+## 1.2.4
+* apply null safety
+
 ## 1.1.4
 * Request ignore battery optimization
 * check status ignore battery optimization

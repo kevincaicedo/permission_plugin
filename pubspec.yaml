@@ -1,6 +1,6 @@
 name: permissions_plugin
 description: Plugin for permission managment on runtime
-version: 1.1.4
+version: 1.2.4
 author: Kevin Caicedo <ing.sys.kevincaicedo@gmail.com>
 homepage: https://github.com/kevincaicedo/permission_plugin
 
